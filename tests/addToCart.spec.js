@@ -34,3 +34,30 @@ test('Add multiple products from different pages to cart', async ({ page }) => {
     }
    
 });
+
+/**
+ * Function to navigate to a specific page number in a paginated product listing
+ */
+async function navigateToPage(page, targetPageNumber) {
+    console.log(`Navigating to page ${targetPageNumber}...`);
+
+    // Selector for the current page number
+    const currentPageLocator = page.locator('.current-page'); // Change if needed
+    const nextPageButton = page.locator('button.next-page'); // Adjust based on actual site
+    const prevPageButton = page.locator('button.prev-page'); // Adjust based on actual site
+
+    // Get the current page number
+    let currentPageText = await currentPageLocator.textContent();
+    let currentPage = parseInt(currentPageText || '1', 10); // Default to page 1 if missing
+
+    while (currentPage !== targetPageNumber) {
+        if (currentPage < targetPageNumber) {
+            await nextPageButton.click(); // Move forward
+        } else {
+            await prevPageButton.click(); // Move backward
+        }
+        await page.waitForLoadState('domcontentloaded'); // Wait for page load
+        currentPageText = await currentPageLocator.textContent();
+        currentPage = parseInt(currentPageText || '1', 10);
+    }
+}

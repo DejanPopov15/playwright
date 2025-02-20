@@ -9,11 +9,28 @@ test('Add multiple products from different pages to cart', async ({ page }) => {
     //     tabs, or category selection), we need to interact with 
     //     the UI to select different products instead of using direct URLs.
       // Define product selection (Selectors & Quantities)
-      const products = [
-        { name: 'Logitech G Pro Wireless Gaming Mouse', quantity: 2, pageNumber: 3 },
-        { name: 'ASUS TUF Gaming X570-Plus ATX Motherboard', quantity: 3, pageNumber: 3 },
-        { name: 'ProducNZXT H510 Elite ATX Mid Tower Caset C', quantity: 1, pageNumber: 3 }
+      const productsToAdd = [
+        { name: 'Logitech G Pro Wireless Gaming Mouse', quantity: 2, pageNumber: 1 },
+        { name: 'ASUS TUF Gaming X570-Plus ATX Motherboard', quantity: 3, pageNumber: 4 },
+        { name: 'Acer Nitro 5', quantity: 1, pageNumber: 2 }
     ];
 
+    // Loop through each product
+    for (const product of productsToAdd) {
+        console.log(`Looking for ${product.name} on page ${product.pageNumber}`);
+
+        // Navigate to the expected page
+        await navigateToPage(page, product.pageNumber);
+
+        // Locate the product on that page
+        const productLocator = page.locator('.product-item', { hasText: product.name });
+
+        if (await productLocator.isVisible()) {
+            await productLocator.locator('button.add-to-cart').click();
+            console.log(`${product.name} added to cart!`);
+        } else {
+            console.log(`❌ ${product.name} not found on page ${product.pageNumber}`);
+        }
+    }
    
 });
